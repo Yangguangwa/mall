@@ -1,35 +1,31 @@
 <template>
-  <div>
-      <slider class="slider" animation="normal" height="30vh">
-      <slider-item v-for="(i, index) in banners" :key="index">
-        <a :href="i.link">
-          <img :src="i.image">
-        </a>
-        
-      </slider-item>
-    </slider>
-  </div>
+  <swiper>
+    <swiper-item v-for="(item, id) in banners" :key="id">
+      <a :href="item.link">
+        <img :src="item.image" alt="">
+      </a>
+    </swiper-item>
+  </swiper>
 </template>
 
 <script>
-import EasySlider from 'vue-easy-slider'
-export default {
-    props:{
-        banners:{
-            type:Array,
-            default(){
-                return []
-            }
+  import {Swiper, SwiperItem} from 'components/common/swiper/index.js'
+  export default {
+    name: "HomeSwiper",
+    props: {
+      banners: {
+        type: Array,
+        default() {
+          return []
         }
-        
+      }
+    },
+    components: {
+      Swiper,
+      SwiperItem
     }
-}
+  }
 </script>
 
-<style>
-.slider img{
-  position: fixed;
-  width: 100vw;
-  height: 30vh;
-}
+<style scoped>
 </style>
