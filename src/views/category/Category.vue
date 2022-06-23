@@ -87,7 +87,7 @@
     mounted() {
       this.initBscroll()
       this.scroll.on('scroll',(position)=>{
-        console.log(position);
+        // console.log(position);
       })
       this.scroll.on('pullingUp',()=>{
         console.log('上拉加载更多');
@@ -99,7 +99,6 @@
 <style>
   .wrapper {
     height: 150px;
-    background-color: pink;
     overflow: hidden;
     /* overflow-y: scroll; */
   }
@@ -118,6 +117,6 @@
     width: 100%;
     height: 30px;
     border-radius: 6px;
-    background-color: #ff002f !important;
+    background-color: #ff002f;
   }
 </style>
