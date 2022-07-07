@@ -1,11 +1,11 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-
+    <tab-control :titles="['流行','新款','精选']" @tabClick="tabClick" ref="tabcontrol1" class="toptabcontrol" v-show="isTabFixed"></tab-control>
     <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll" :pull-up-load="true" @pullingUp="loadMore">
-      <home-swiper :banners="banners"/>
+      <home-swiper :banners="banners" @swiperImgLoad="swiperImgLoad"/>
       <recommend-view :recommends="recommends"></recommend-view>
-      <tab-control class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick"></tab-control>
+      <tab-control :titles="['流行','新款','精选']" @tabClick="tabClick" ref="tabcontrol2"></tab-control>
       <!-- <home-picture :pictures="pictures"></home-picture> -->
       <goods-list :goods="goods[currentType].list"></goods-list>
       <ul>
@@ -403,11 +403,13 @@ export default {
         'pop':{page:0,list:[]},
         'new':{page:0,list:[]},
         'sell':{page:0,list:[]},
-
       },
       pictures:[],
       currentType:'pop',
-      backTopisShow:false
+      backTopisShow:false,
+      tabOffsetTop:0,
+      isTabFixed:false,
+      saveY:0
     }
   },
   created(){
@@ -420,6 +422,12 @@ export default {
     // getHomeGoods().then(res=>{
     //   this.pictures=res.list
     // })
+  },
+  activated(){
+    this.$refs.scroll.scroll.scrollTo(0,this.saveY,1)
+  },
+  deactivated(){
+    this.saveY=this.$refs.scroll.scroll.y
   },
   methods:{
     tabClick(index){
@@ -436,6 +444,8 @@ export default {
         default:
           break;
       }
+      this.$refs.tabcontrol1.currentIndex = index
+      this.$refs.tabcontrol2.currentIndex = index
     },
     backClick(){
       this.$refs.scroll.scroll.scrollTo(0,0,500)
@@ -444,11 +454,16 @@ export default {
       // console.log(position.y);
       if(position.y<-1000) this.backTopisShow=true
       if(position.y>-1000) this.backTopisShow=false
+
+      this.isTabFixed= (-position.y)>this.tabOffsetTop
     },
     loadMore(){
       console.log('上拉加载更多');
       this.$refs.scroll.scroll.finishPullUp()
       // this.$refs.scroll拿到<scroll>组件 调用scroll组件里的data的scroll实例的finishPullUp方法
+    },
+    swiperImgLoad(){
+      this.tabOffsetTop=this.$refs.tabcontrol2.$el.offsetTop
     }
   }
 }
@@ -456,27 +471,32 @@ export default {
 
 <style scoped>
 #home{
-  padding-top: 44px;
+  /* padding-top: 44px; */
+  position: relative;
   height: 100vh;
-  background-color: #fff;
 }
 .home-nav{
   background-color: var(--color-tint);
   color: #fff;
-  position: fixed;
+
+  /* 使用浏览器原生滚动时，为了导航栏不跟随滚动使用 */
+  /* position: fixed;
   left: 0;
   right: 0;
   top: 0;
+  z-index: 9; */
+}
+.toptabcontrol{
+  position: relative;
   z-index: 9;
 }
 
-.tab-control{
-  position: sticky;
-  top: 44px;
-}
-
 .content{
-  height: calc(100% - 49px);
+  position: absolute;
+  top: 44px;
+  bottom: 49px;
+  left: 0;
+  right: 0;
   overflow: hidden;
 }
 
